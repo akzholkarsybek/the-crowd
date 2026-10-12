@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE CROWD — Can you predict people?</title>
+<style>
+:root{--bg:#f5f3ed;--ink:#181916;--muted:#77796f;--line:#deded4;--lime:#d8ff4f;--card:#fffef9;--purple:#7457f5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+.wrap{max-width:940px;margin:auto;padding:22px 18px 42px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:30px}.brand{font-weight:950;letter-spacing:-1.7px;font-size:clamp(22px,4vw,32px)}.brand span{background:var(--lime);padding:1px 7px;border-radius:7px}.tag{font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;background:var(--card)}
+.hero{text-align:center;margin:0 auto 22px;max-width:650px}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:900;color:var(--muted)}h1{font-size:clamp(32px,7vw,58px);line-height:.99;letter-spacing:-2.8px;margin:12px 0 12px;font-weight:950}.sub{font-size:15px;color:#66685f;line-height:1.5;margin:0 auto;max-width:460px}
+.game{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(17px,4vw,30px);box-shadow:0 12px 36px #24271b0b}.progressline{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:11px;font-weight:900;letter-spacing:1px;color:var(--muted)}.track{height:5px;background:#ecece3;border-radius:9px;margin:13px 0 26px;overflow:hidden}.fill{height:100%;background:var(--ink);width:10%;transition:width .3s}
+.qnum{font-size:12px;font-weight:900;color:var(--purple);letter-spacing:1.5px}.question{font-size:clamp(23px,4.5vw,36px);line-height:1.1;letter-spacing:-1.1px;font-weight:900;max-width:650px;margin:10px auto 22px;text-align:center}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{min-height:174px;border:1.5px solid var(--line);border-radius:17px;padding:18px;background:#fff;text-align:left;display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s,border .15s,background .15s}.choice:hover{transform:translateY(-3px);border-color:#9da08e}.choice .letter{font-size:11px;font-weight:900;color:var(--muted);letter-spacing:1px}.choice .emoji{font-size:36px;margin:8px 0}.choice .label{font-size:clamp(16px,2.5vw,21px);font-weight:900;letter-spacing:-.5px;line-height:1.13}.choice .hint{font-size:11px;color:var(--muted);margin-top:10px}.choice.selected{border:2px solid var(--ink);background:var(--lime)}.choice:disabled{cursor:default}
+.reveal{display:none;margin-top:18px;border-radius:16px;background:#f0f0e8;padding:17px}.reveal.show{display:block;animation:pop .3s ease}.revealhead{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:900}.bars{display:grid;gap:13px;margin:17px 0}.barrow{display:grid;grid-template-columns:28px 1fr 45px;gap:9px;align-items:center;font-size:12px;font-weight:850}.barbg{height:12px;border-radius:9px;background:#dedfd5;overflow:hidden}.barfill{height:100%;border-radius:9px;background:var(--ink);width:0;transition:width .65s cubic-bezier(.2,.8,.2,1)}.barfill.winner{background:var(--purple)}.resultnote{font-size:13px;color:#62645a;line-height:1.5}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:900}.primary{background:var(--ink);color:white}.secondary{background:#eeeee6;color:var(--ink);border:1px solid var(--line)}.btn:disabled{opacity:.45;cursor:not-allowed}.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:17px}.scorecard{display:none;text-align:center;padding:20px 0 8px}.scorecard.show{display:block}.scorebig{font-size:clamp(62px,13vw,100px);font-weight:950;letter-spacing:-6px;line-height:1}.rank{display:inline-block;background:var(--lime);border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px;margin:12px 0}.sharebox{background:#eeeee6;border-radius:16px;padding:20px;margin-top:18px;font-weight:850;line-height:1.8}.disclaimer{font-size:11px;color:var(--muted);line-height:1.5;margin:18px 2px 0}.tiny{font-size:10px;color:var(--muted)}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:540px){.wrap{padding:16px 12px 30px}.top{margin-bottom:23px}.tag{display:none}.choices{gap:9px}.choice{min-height:158px;padding:13px}.choice .emoji{font-size:30px}.question{margin-bottom:18px}.game{border-radius:20px}.footer{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">THE <span>CROWD</span></div>
+    <div class="tag">PREDICT PEOPLE. BEAT THE AVERAGE.</div>
+    <div class="pill" id="scorePill">SCORE&nbsp; 0 / 0</div>
+  </header>
+  <section class="hero">
+    <div class="eyebrow">DAILY CHALLENGE · 10 QUESTIONS</div>
+    <h1>Can you predict<br>the crowd?</h1>
+    <p class="sub">Every choice has a cost. Pick the side you think most people would choose — not the one you personally prefer.</p>
+  </section>
+  <main class="game">
+    <div id="playView">
+      <div class="progressline"><span id="roundLabel">ROUND 01 / 10</span><span id="streakLabel">STREAK 0</span></div>
+      <div class="track"><div class="fill" id="progressFill"></div></div>
+      <div class="qnum" id="qnum">QUESTION 01</div>
+      <div class="question" id="question">Which would most people choose?</div>
+      <div class="choices">
+        <button class="choice" id="choiceA" onclick="choose('A')">
+          <div class="letter">OPTION A</div><div class="emoji" id="emojiA">🏡</div><div class="label" id="labelA">Live in your dream house alone</div><div class="hint">Tap to predict</div>
+        </button>
+        <button class="choice" id="choiceB" onclick="choose('B')">
+          <div class="letter">OPTION B</div><div class="emoji" id="emojiB">🫂</div><div class="label" id="labelB">Live in an average house with friends</div><div class="hint">Tap to predict</div>
+        </button>
+      </div>
+      <section class="reveal" id="reveal">
+        <div class="revealhead"><span id="revealTitle">THE CROWD CHOSE…</span><span id="pointLabel">+0 POINTS</span></div>
+        <div class="bars">
+          <div class="barrow"><span>A</span><div class="barbg"><div class="barfill" id="barA"></div></div><span id="pctA">—</span></div>
+          <div class="barrow"><span>B</span><div class="barbg"><div class="barfill" id="barB"></div></div><span id="pctB">—</span></div>
+        </div>
+        <div class="resultnote" id="resultNote"></div>
+        <div class="actions"><button class="btn primary" id="nextBtn" onclick="nextRound()">Next question →</button><button class="btn secondary" onclick="skipReveal()">Skip reveal</button></div>
+      </section>
+    </div>
+    <section class="scorecard" id="scorecard">
+      <div class="eyebrow">YOUR FINAL RESULT</div><h2 style="font-size:clamp(30px,6vw,48px);letter-spacing:-2px;margin:12px 0">How well do you know people?</h2>
+      <div class="scorebig" id="finalScore">0/10</div><div class="rank" id="rank">CROWD NOVICE</div>
+      <p class="sub" id="finalText">Can your friends beat you?</p>
+      <div class="sharebox" id="shareText">THE CROWD<br>I predicted people correctly 0/10 times.</div>
+      <div class="actions" style="justify-content:center"><button class="btn primary" onclick="shareResult()">Share my result ↗</button><button class="btn secondary" onclick="restart()">Play again</button></div>
+    </section>
+    <div class="footer"><span>10 new questions daily · No signup · Just instinct</span><span id="modeLabel">DEMO MODE · SAMPLE RESULTS</span></div>
+  </main>
+  <p class="disclaimer">Prototype note: this version rotates 10 questions each day from a curated bank. Percentages are editorial demo estimates, not real crowd votes. Collect anonymous votes before presenting results as actual public opinion.</p>
+</div>
+<script>
+// Daily challenges use a fixed Asia/Almaty date so everyone gets the same set.
+// Percentages are editorial demo estimates, not real or live poll results.
+const questionBank = [
+ {q:"Which regret would hurt more?",a:"Never trying and failing",b:"Trying and letting everyone see you fail",ea:"🧗",eb:"👀",pa:57,pb:43,why:"One option risks private regret; the other risks public embarrassment."},
+ {q:"You can learn one truth. Which do you choose?",a:"What people really think of you",b:"What your life will look like in 10 years",ea:"🪞",eb:"🔮",pa:62,pb:38,why:"One gives you information you may not want. The other removes some uncertainty from your future."},
+ {q:"Which would be harder to forgive?",a:"A friend lying to protect you",b:"A friend telling the truth to hurt you",ea:"🤐",eb:"🗡️",pa:44,pb:56,why:"Intentions matter, but so does the damage a person chooses to cause."},
+ {q:"You must give up one forever. Which goes?",a:"Being liked by strangers",b:"Being fully understood by people close to you",ea:"🌐",eb:"🫂",pa:68,pb:32,why:"Approval is broad and easy to notice; being understood is rarer and more personal."},
+ {q:"Which life sounds better to most people?",a:"A peaceful life with few big moments",b:"An exciting life with frequent heartbreak",ea:"🌿",eb:"🎢",pa:64,pb:36,why:"People say they want excitement, but living with its cost is different."},
+ {q:"What would most people choose?",a:"Be respected but not loved",b:"Be loved but not respected",ea:"🏛️",eb:"❤️",pa:39,pb:61,why:"Respect can bring status and authority; love can bring closeness and safety."},
+ {q:"Which truth would you rather know?",a:"Who secretly dislikes you",b:"Who secretly envies you",ea:"🧊",eb:"👁️",pa:46,pb:54,why:"Dislike can threaten belonging; envy can reveal your influence."},
+ {q:"You can erase one memory. Which one?",a:"The best day you ever had",b:"The worst day you ever had",ea:"🌅",eb:"🌧️",pa:24,pb:76,why:"Removing pain sounds obvious, but even painful memories can shape who we become."},
+ {q:"Which would most people rather risk?",a:"Being ordinary forever",b:"Being great and eventually forgotten",ea:"🪴",eb:"🌠",pa:53,pb:47,why:"A quiet life offers stability; a brief legacy offers meaning without permanence."},
+ {q:"Someone offers you the answer to one question. Pick it.",a:"Are you happy right now?",b:"Will you be happy in the end?",ea:"🧭",eb:"🏁",pa:41,pb:59,why:"The present is actionable; the future offers reassurance but little control."},
+ {q:"Which is the bigger betrayal?",a:"A partner falling for someone else",b:"A partner staying with you out of pity",ea:"💔",eb:"🎭",pa:55,pb:45,why:"One breaks an agreement; the other makes you question whether the relationship was ever real."},
+ {q:"You get one guaranteed advantage. Which one?",a:"Everyone trusts you immediately",b:"You can tell when anyone is lying",ea:"🤝",eb:"🕵️",pa:58,pb:42,why:"Trust makes life easier; detecting lies may make it harder to trust anyone."},
+ {q:"Which would most people choose?",a:"A partner who loves you more",b:"A partner you love more",ea:"💞",eb:"🔥",pa:61,pb:39,why:"Being loved more can feel safe; loving more can feel meaningful but vulnerable."},
+ {q:"You can change one thing about your past. What is it?",a:"One bad decision",b:"One missed opportunity",ea:"↩️",eb:"🚪",pa:48,pb:52,why:"A bad choice has a clear cost. A missed chance leaves room to imagine what might have been."},
+ {q:"Which compliment would mean more?",a:"“You are a good person.”",b:"“You are exceptionally talented.”",ea:"💚",eb:"⚡",pa:56,pb:44,why:"One speaks to character; the other to ability and achievement."},
+ {q:"Which would you rather have?",a:"A lot of money and no free time",b:"Enough money and control of your time",ea:"💸",eb:"⏳",pa:29,pb:71,why:"Money can buy options, but time is the one resource you cannot replenish."},
+ {q:"Which is worse?",a:"Being forgotten after you die",b:"Being remembered for the wrong reason",ea:"🕯️",eb:"📰",pa:43,pb:57,why:"Obscurity means no legacy; a bad legacy keeps your name alive without your control."},
+ {q:"Which would most people protect first?",a:"Their reputation",b:"Their closest relationship",ea:"🏅",eb:"🫶",pa:36,pb:64,why:"Reputation affects how the world treats you; relationships affect who stays."},
+ {q:"You can guarantee one thing for your child. Choose.",a:"They will always be happy",b:"They will always be able to recover",ea:"☀️",eb:"🌱",pa:32,pb:68,why:"A life without pain is impossible to guarantee; resilience can help after it arrives."},
+ {q:"Which would be harder to live with?",a:"Knowing you wasted your talent",b:"Knowing you sacrificed your happiness for success",ea:"🎯",eb:"🥀",pa:47,pb:53,why:"Unfulfilled potential and an empty victory can both look like regret from the inside."},
+ {q:"Which secret would you rather discover?",a:"Your best friend has lied to you",b:"Your best friend has never really liked you",ea:"🧩",eb:"🧊",pa:63,pb:37,why:"A lie can have a reason. Hidden dislike calls the whole friendship into question."},
+ {q:"Pick the risk most people would take.",a:"Start over at 30 with no money",b:"Stay safe in a life you do not want",ea:"🧳",eb:"🔒",pa:42,pb:58,why:"Starting over has visible danger; staying has a quieter cost that accumulates."},
+ {q:"Which power would cause more trouble?",a:"Everyone can hear your thoughts",b:"You can hear everyone's thoughts",ea:"🧠",eb:"📡",pa:37,pb:63,why:"Being exposed is terrifying, but hearing things you cannot unhear may be worse."},
+ {q:"Which would most people choose?",a:"A truthful answer that ruins your day",b:"A comforting lie that helps you sleep",ea:"🪨",eb:"🛏️",pa:59,pb:41,why:"People praise honesty, but comfort has a powerful pull when the truth is personal."},
+ {q:"Which would you rather be known for?",a:"Being kind to everyone",b:"Being loyal to a few people",ea:"🌼",eb:"🛡️",pa:45,pb:55,why:"Kindness is wide-reaching; loyalty asks you to choose who gets your commitment."},
+ {q:"Which loss would change you more?",a:"Losing someone who knows everything about you",b:"Losing someone who believes in your potential",ea:"🫂",eb:"🚀",pa:57,pb:43,why:"One person witnesses who you are; the other helps you imagine who you could become."},
+ {q:"What would most people rather hear?",a:"“You were right.”",b:"“You made the right choice.”",ea:"✅",eb:"🧭",pa:35,pb:65,why:"Being right validates your judgment; making the right choice validates the outcome."},
+ {q:"Which is more valuable?",a:"A second chance with no guarantee",b:"A clear explanation for why you failed",ea:"🔁",eb:"🔍",pa:66,pb:34,why:"A second chance offers possibility, while an explanation offers closure."},
+ {q:"Choose the truth you would rather face.",a:"You are not as important to people as you think",b:"People depend on you more than you realize",ea:"🫥",eb:"🧱",pa:52,pb:48,why:"One challenges your sense of importance; the other adds responsibility you may not have noticed."},
+ {q:"Which would most people give up first?",a:"Their chance to be rich",b:"Their chance to be admired",ea:"🏦",eb:"👏",pa:72,pb:28,why:"Wealth changes practical options; admiration can be addictive but is harder to hold onto."}
+];
+const QUESTIONS_PER_DAY=10;
+function dayKey(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function seededShuffle(items,seed){let a=items.slice(),s=seed>>>0;for(let i=a.length-1;i>0;i--){s=(Math.imul(s,1664525)+1013904223)>>>0;let j=s%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+const today=dayKey();
+const questions=seededShuffle(questionBank,hash(today)).slice(0,QUESTIONS_PER_DAY);
+let idx=0,score=0,streak=0,bestStreak=0,answers=[],selected=null;
+const $=id=>document.getElementById(id);
+function render(){const x=questions[idx];$('roundLabel').textContent=`ROUND ${String(idx+1).padStart(2,'0')} / ${questions.length}`;$('qnum').textContent=`TODAY'S QUESTION ${String(idx+1).padStart(2,'0')}`;$('progressFill').style.width=`${idx/questions.length*100}%`;$('streakLabel').textContent=`STREAK ${streak}`;$('question').textContent=x.q;$('labelA').textContent=x.a;$('labelB').textContent=x.b;$('emojiA').textContent=x.ea;$('emojiB').textContent=x.eb;$('choiceA').className='choice';$('choiceB').className='choice';$('choiceA').disabled=false;$('choiceB').disabled=false;$('choiceA').querySelector('.hint').textContent='Tap to predict';$('choiceB').querySelector('.hint').textContent='Tap to predict';$('reveal').classList.remove('show');$('scorePill').innerHTML=`SCORE&nbsp; ${score} / ${answers.length}`;$('modeLabel').textContent=`DAILY CHALLENGE · ${today}`;selected=null;}
+function choose(which){if(selected)return;selected=which;const x=questions[idx],pctA=x.pa,pctB=x.pb,winner=pctA>=pctB?'A':'B',correct=which===winner;answers.push({which,correct});if(correct){score++;streak++;bestStreak=Math.max(bestStreak,streak)}else streak=0;$('scorePill').innerHTML=`SCORE&nbsp; ${score} / ${answers.length}`;$('streakLabel').textContent=`STREAK ${streak}`;$('choiceA').disabled=true;$('choiceB').disabled=true;$('choice'+which).classList.add('selected');$('choiceA').querySelector('.hint').textContent=which==='A'?'YOUR PREDICTION':'';$('choiceB').querySelector('.hint').textContent=which==='B'?'YOUR PREDICTION':'';$('revealTitle').textContent=`DEMO ESTIMATE FAVOURS ${winner}`;$('pointLabel').textContent=correct?'+1 POINT':'0 POINTS';$('pctA').textContent=pctA+'%';$('pctB').textContent=pctB+'%';$('barA').style.width=pctA+'%';$('barB').style.width=pctB+'%';$('barA').classList.toggle('winner',winner==='A');$('barB').classList.toggle('winner',winner==='B');$('resultNote').textContent=x.why;$('nextBtn').textContent=idx===questions.length-1?'See my result →':'Next question →';$('reveal').classList.add('show');}
+function nextRound(){if(!selected)return;if(idx<questions.length-1){idx++;render()}else finish()}
+function skipReveal(){nextRound()}
+function finish(){$('playView').style.display='none';$('scorecard').classList.add('show');$('progressFill').style.width='100%';$('finalScore').textContent=`${score}/${questions.length}`;let rank,text;if(score>=9){rank='HUMAN NATURE EXPERT';text='You read the sample predictions frighteningly well. Challenge someone to beat your score.'}else if(score>=7){rank='CROWD WHISPERER';text='You have a strong instinct for these dilemmas. Can your friends do better?'}else if(score>=4){rank='AVERAGE HUMAN';text='These choices are harder than they look. Run it back tomorrow.'}else{rank='CHAOS AGENT';text='Your instincts went against the demo estimates. That might be a good thing.'}$('rank').textContent=rank;$('finalText').textContent=text;$('shareText').innerHTML=`THE CROWD 🧠<br>Daily challenge ${today}<br>I matched the demo prediction ${score}/${questions.length} times.<br>Best streak: ${bestStreak}.<br>Can you beat me?`;}
+function restart(){idx=0;score=0;streak=0;bestStreak=0;answers=[];selected=null;$('playView').style.display='block';$('scorecard').classList.remove('show');render()}
+async function shareResult(){const text=`THE CROWD 🧠\nDaily challenge ${today}\nI matched the demo prediction ${score}/${questions.length} times.\nBest streak: ${bestStreak}.\nCan you beat me?`;if(navigator.share){try{await navigator.share({title:'THE CROWD',text})}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(text);alert('Result copied! Share it with your friends.')}catch(e){alert(text)}}else{alert(text)}}
+render();
+</script>
+</body>
+</html>
